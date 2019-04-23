@@ -24,7 +24,7 @@ waitForHomeScreen ()
 waitForRecoveryDesktop ()
 {
 	set +e
-	x=$(adb wait-for-device shell getprop twrp.action_complete)
+	x=$(adb shell getprop twrp.action_complete)
 	while [[ -z "$x" ]]; do
 		sleep 2
 		read -t 0.1 -n 1 -s -r -p  $'\rWaiting for recovery mode desktop. Press any key to stop waiting and continue to executing the following commands.'
