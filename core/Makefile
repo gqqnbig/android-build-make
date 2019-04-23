@@ -328,11 +328,12 @@ endif
 
 build_desc :=
 
-ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
-INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
-else
+# 不构建recovery.img
+#ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
+#INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
+#else
 INSTALLED_RECOVERYIMAGE_TARGET :=
-endif
+#endif
 
 $(INSTALLED_BUILD_PROP_TARGET): $(intermediate_system_build_prop) $(INSTALLED_RECOVERYIMAGE_TARGET)
 	@echo "Target build info: $@"
