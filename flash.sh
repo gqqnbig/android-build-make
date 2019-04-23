@@ -24,8 +24,8 @@ waitForHomeScreen ()
 waitForRecoveryDesktop ()
 {
 	set +e
-	x=$(adb shell getprop twrp.action_complete)
-	while [[ -z "$x" ]]; do
+	x=$(adb shell getprop twrp.action_complete) # 测试发现当twrp未运行时，此命令返回的是\r\n。
+	while [[ "${x/$'\x0d'}" != "0" ]]; do
 		sleep 2
 		read -t 0.1 -n 1 -s -r -p  $'\rWaiting for recovery mode desktop. Press any key to stop waiting and continue to executing the following commands.'
 		if [[ $? -eq 0 ]]; then
