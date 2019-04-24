@@ -76,6 +76,7 @@ read -n 1 -s -r -p "Press any key to continue"
 adb shell su -c date "$(date +%m%d%H%M%Y)"
 adb shell su -c 'svc bluetooth disable'
 adb shell settings put system accelerometer_rotation 0 #disable auto rotate
+sleep 2
 
 adb reboot recovery
 adb wait-for-recovery
