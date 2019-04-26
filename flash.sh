@@ -88,7 +88,7 @@ if [[ $startStage -le 2 ]]; then
 	echo $'Change Request Timeout to a larger value if you wish.\033[0m'
 	read -n 1 -s -r -p "Press any key to continue"
 	echo ""
-	adb shell su -c date "$(date +%m%d%H%M%Y)"
+	adb shell su -c date "$(date +%m%d%H%M%Y)" > /dev/null # the command will echo the set time. We don't need this.
 	adb shell su -c 'svc bluetooth disable'
 	adb shell settings put system accelerometer_rotation 0 #disable auto rotate
 	sleep 2
