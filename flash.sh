@@ -15,7 +15,11 @@ waitForHomeScreen ()
 			sleep 2
 			break
 		fi
-		x=$(adb shell getprop sys.boot_completed)
+		x=$(adb shell getprop sys.boot_completed 2>/dev/null)
+		if [[ $? -ne 0 ]]; then
+			>&2 echo $'\n\033[31mFailed to boot to system!\033[0m'
+			exit
+		fi
 	done
 	echo ""
 	set -e
