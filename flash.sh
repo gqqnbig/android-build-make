@@ -43,6 +43,12 @@ else
 	startStage=$1
 fi
 
+if [[ "$ANDROID_PRODUCT_OUT" == *generic ]]; then
+	>&2 echo $'\033[31mYou cannot flash generic image to a physical device!\033[0m'
+	>&2 echo $'\033[31mDouble check your lunch selection.\033[0m'
+	exit
+fi
+
 if [[ startStage -le 1 ]]; then
 	echo "Make user the phone is in fastboot mode. You may use command \`adb reboot bootloader\`"
 	read -n 1 -s -r -p "then press any key to continue"
