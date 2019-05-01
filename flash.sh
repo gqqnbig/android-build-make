@@ -108,4 +108,8 @@ if [[ $startStage -le 2 ]]; then
 	waitForRecoveryDesktop
 	adb shell twrp install open_gapps-arm64-8.1-mini-20190409.zip
 	adb reboot
+	adb wait-for-device
+	sleep 2
+	# logcat buffer size is set on the device.
+	adb logcat -G 20M
 fi
