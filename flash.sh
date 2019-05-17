@@ -101,6 +101,7 @@ if [[ $startStage -le 2 ]]; then
 	adb shell su -c date "$(date +%m%d%H%M%Y)" > /dev/null # the command will echo the set time. We don't need this.
 	adb shell su -c 'svc bluetooth disable'
 	adb shell settings put system accelerometer_rotation 0 #disable auto rotate
+	adb shell media volume --set 0 --stream 1 # mute the volume
 	sleep 2
 
 	adb reboot recovery
