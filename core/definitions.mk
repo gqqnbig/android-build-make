@@ -103,6 +103,9 @@ ALL_INIT_RC_INSTALLED_PAIRS :=
 ## Debugging; prints a variable list to stdout
 ###########################################################
 
+# define是定义命令包。如果Makefile中出现一些相同命令序列，那么我们可以为这些相同的命令序列定义一个变量
+# https://blog.csdn.net/haoel/article/details/2891
+
 # $(1): variable name list, not variable values
 define print-vars
 $(foreach var,$(1), \
