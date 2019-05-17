@@ -10,7 +10,7 @@ waitForHomeScreen ()
 	x=$(adb wait-for-device shell getprop sys.boot_completed)
 	while [ "$x" != "1" ]; do
 		sleep 2
-		read -t 0.1 -n 1 -s -r -p  $'\rWaiting for home screen. Press any key to stop waiting and continue to executing the following commands.'
+		read -t 0.1 -n 1 -s -r -p  $'\rWaiting for home screen.'
 		if [[ $? -eq 0 ]]; then
 			sleep 2
 			break
@@ -31,7 +31,7 @@ waitForRecoveryDesktop ()
 	x=$(adb shell getprop twrp.action_complete) # 测试发现当twrp未运行时，此命令返回的是\r\n。
 	while [[ "${x/$'\x0d'}" != "0" ]]; do
 		sleep 2
-		read -t 0.1 -n 1 -s -r -p  $'\rWaiting for recovery mode desktop. Press any key to stop waiting and continue to executing the following commands.'
+		read -t 0.1 -n 1 -s -r -p  $'\rWaiting for recovery mode desktop.'
 		if [[ $? -eq 0 ]]; then
 			sleep 2
 			break
