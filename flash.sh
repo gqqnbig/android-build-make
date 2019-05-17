@@ -62,6 +62,7 @@ if [[ startStage -le 1 ]]; then
 	# 有时候不能很好地运行
 	fastboot flash system #if only flash system, the apps are still there.
 	fastboot flash userdata
+	fastboot flash boot
 	# After flashing a new image, the phone has to boot to system at least once, then the computer can recognize it in recovery mode.
 	fastboot reboot
 
@@ -86,6 +87,7 @@ if [[ $startStage -le 2 ]]; then
 	adb wait-for-recovery shell getprop
 	waitForRecoveryDesktop
 
+	# installs to boot partition.
 	adb shell twrp install /sdcard/Magisk-v18.1.zip
 
 
