@@ -46,7 +46,7 @@ function build_build_var_cache()
     cached_abs_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     # Call the build system to dump the "<val>=<value>" pairs as a shell script.
 	# 这里用了cd命令。如果在Bash里用户有自定义命令覆盖了cd，这个命令将不能正常工作。
-    build_dicts_script=`\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
+    build_dicts_script=`builtin cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
                         command make --no-print-directory -f build/core/config.mk \
                         dump-many-vars \
                         DUMP_MANY_VARS="$cached_vars" \
@@ -100,7 +100,7 @@ function get_abs_build_var()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
+    (builtin cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
       command make --no-print-directory -f build/core/config.mk dumpvar-abs-$1)
 }
 
@@ -118,7 +118,7 @@ function get_build_var()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
+    (builtin cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
       command make --no-print-directory -f build/core/config.mk dumpvar-$1)
 }
 
@@ -717,10 +717,10 @@ function gettop
             local HERE=$PWD
             local T=
             while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
-                \cd ..
+                builtin cd ..
                 T=`PWD= /bin/pwd -P`
             done
-            \cd $HERE
+            builtin cd $HERE
             if [ -f "$T/$TOPFILE" ]; then
                 echo $T
             fi
@@ -770,12 +770,12 @@ function findmakefile()
         T=`PWD= /bin/pwd`
         if [ -f "$T/Android.mk" -o -f "$T/Android.bp" ]; then
             echo $T/Android.mk
-            \cd $HERE
+            builtin cd $HERE
             return
         fi
-        \cd ..
+        builtin cd ..
     done
-    \cd $HERE
+    builtin cd $HERE
 }
 
 function mm()
@@ -847,7 +847,7 @@ function mmm()
             DIR=${DIR#./}
             DIR=${DIR%/}
             if [ -f $DIR/Android.mk -o -f $DIR/Android.bp ]; then
-                local TO_CHOP=`(\cd -P -- $T && pwd -P) | wc -c | tr -d ' '`
+                local TO_CHOP=`(builtin cd -P -- $T && pwd -P) | wc -c | tr -d ' '`
                 local TO_CHOP=`expr $TO_CHOP + 1`
                 local START=`PWD= /bin/pwd`
                 local MDIR=`echo $START | cut -c${TO_CHOP}-`
@@ -962,9 +962,9 @@ function croot()
     local T=$(gettop)
     if [ "$T" ]; then
         if [ "$1" ]; then
-            \cd $(gettop)/$1
+            builtin cd $(gettop)/$1
         else
-            \cd $(gettop)
+            builtin cd $(gettop)
         fi
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
@@ -979,12 +979,12 @@ function cproj()
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
         T=$PWD
         if [ -f "$T/Android.mk" ]; then
-            \cd $T
+            builtin cd $T
             return
         fi
-        \cd ..
+        builtin cd ..
     done
-    \cd $HERE
+    builtin cd $HERE
     echo "can't find Android.mk"
 }
 
@@ -1471,7 +1471,7 @@ function smoketest()
         return
     fi
 
-    (\cd "$T" && mmm tests/SmokeTest) &&
+    (builtin cd "$T" && mmm tests/SmokeTest) &&
       adb uninstall com.android.smoketest > /dev/null &&
       adb uninstall com.android.smoketest.tests > /dev/null &&
       adb install $ANDROID_PRODUCT_OUT/data/app/SmokeTestApp.apk &&
@@ -1505,7 +1505,7 @@ function godir () {
     fi
     if [[ ! -f $FILELIST ]]; then
         echo -n "Creating index..."
-        (\cd $T; find . -wholename ./out -prune -o -wholename ./.repo -prune -o -type f > $FILELIST)
+        (builtin cd $T; find . -wholename ./out -prune -o -wholename ./.repo -prune -o -type f > $FILELIST)
         echo " Done"
         echo ""
     fi
@@ -1538,7 +1538,7 @@ function godir () {
     else
         pathname=${lines[0]}
     fi
-    \cd $T/$pathname
+    builtin cd $T/$pathname
 }
 
 # Force JAVA_HOME to point to java 1.7/1.8 if it isn't already set.
