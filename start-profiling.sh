@@ -1,7 +1,10 @@
-set -- $(getopt -u -o '' -l output: -- "$@")
+set -- $(getopt -u -o p -l output:,print -- "$@")
 while [ -n "$1" ]
 do
 	case "$1" in
+	-p|--print)
+		print=true
+		;;
 	--output)
 		output="$2"
 		shift
@@ -45,21 +48,19 @@ else
 		exit 1
 	fi
 
+	env="CLASSPATH=/system/framework/am.jar"
 	coreCommand="/system/bin com.android.commands.am.Am start -S -n $fileName/$activityName"
 fi
 
 
-echo $coreCommand
-#exit
-
-# in $@ 可以省略
-# for arg do 
-# 	echo '--> '"\`$arg'"
-# done
+if [[ $print ]]; then
+	echo "$env app_process -EnableRWProfiling:true -EnableHeapSizeProfiling:true $coreCommand"
+	sleep 1
+fi
 
 # echo $$ 里的$$在调用时展开，所以如果不用单引号包起来，展开的是当前shell的PID。
 # 同理，sh -c的参数也必须用单引号包起来。
-adb shell 'sh -c '"'"'echo $$; sleep 1;CLASSPATH=/system/framework/am.jar exec app_process -EnableRWProfiling:true -EnableHeapSizeProfiling:true' "$coreCommand"  "'" | {
+adb shell 'sh -c '"'"'echo $$; sleep 1;'$env' exec app_process -EnableRWProfiling:true -EnableHeapSizeProfiling:true' "$coreCommand"  "'" | {
 	IFS= read -r line
 	pid=$line
 
