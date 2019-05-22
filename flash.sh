@@ -46,15 +46,20 @@ if [[ -z $1 ]]; then
 else
 	startStage=$1
 fi
+if [[ -z $ANDROID_PRODUCT_OUT ]]; then
+	>&2 echo $'\033[31mIt\'s not an Android build environment.\033[0m'
+	>&2 echo $'Did you source build/envsetup.sh?'
+	exit 1
+fi
 
 if [[ "$ANDROID_PRODUCT_OUT" == *generic ]]; then
 	>&2 echo $'\033[31mYou cannot flash generic image to a physical device!\033[0m'
 	>&2 echo $'\033[31mDouble check your lunch selection.\033[0m'
-	exit
+	exit 1
 fi
 
-if [[ startStage -le 1 ]]; then
-	echo "Make user the phone is in fastboot mode. You may use command \`adb reboot bootloader\`"
+if [[ $startStage -le 1 ]]; then
+	echo "Make sure the phone is in fastboot mode. You may use command \`adb reboot bootloader\`"
 	read -n 1 -s -r -p "then press any key to continue"
 	echo ""
 	#Try to only flash system partition, thus don't have to flash TWRP recovery image over and over.
