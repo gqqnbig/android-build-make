@@ -1702,3 +1702,19 @@ addcompletions
 export USE_CCACHE=1
 export CCACHE_DIR=/tmp/ccache
 prebuilts/misc/linux-x86/ccache/ccache -M 100G
+
+adb() {
+	if [[ "$1" = "logcat" ]]; then
+		shift
+		if [[ "$1" = "--show-uninteresting" ]]; then
+			shift
+			command adb logcat $@
+		else
+			echo "Uninteresting lines are suppressed. To see them, use adb logcat --show-uninteresting ..."
+			command adb logcat $@ | grep -v -F -e "linux_qmi_qmux_io_wake_lock" \
+			 							 -e "Ephemeral installer not found"
+		fi
+	else
+		command adb $@
+	fi
+}
