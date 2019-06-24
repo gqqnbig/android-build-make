@@ -58,10 +58,18 @@ if [[ "$ANDROID_PRODUCT_OUT" == *generic ]]; then
 	exit 1
 fi
 
+builtin cd ~/Project
+
 if [[ $startStage -le 1 ]]; then
-	echo "Make sure the phone is in fastboot mode. You may use command \`adb reboot bootloader\`"
-	read -n 1 -s -r -p "then press any key to continue"
-	echo ""
+	if [[ $(adb devices | wc -l) -eq 3 ]]; then
+		# read -n 1 -s -r -p "The script is going to reboot the phone to fastboot mode. Press any key to continue"
+		adb reboot bootloader
+		echo ""
+	else
+		echo "Make sure the phone is in fastboot mode. You may use command \`adb reboot bootloader\`"
+		read -n 1 -s -r -p "then press any key to continue"
+		echo ""
+	fi
 	#Try to only flash system partition, thus don't have to flash TWRP recovery image over and over.
 
 	# 有时候不能很好地运行
@@ -70,10 +78,17 @@ if [[ $startStage -le 1 ]]; then
 	fastboot flash boot
 	# After flashing a new image, the phone has to boot to system at least once, then the computer can recognize it in recovery mode.
 	fastboot reboot
+fi
 
+if [[ $startStage -le 2 ]]; then
 	waitForHomeScreen
 
-	adb push Magisk-v18.1.zip /sdcard/
+	#adb push Java/Hello.dex /sdcard/
+
+	set +e
+	while ! adb push Magisk-v18.1.zip /sdcard/
+	do : ;done
+	set -e
 	adb push open_gapps-arm64-8.1-mini-20190409.zip /sdcard/
 	# Install root manager app
 	adb install MagiskManager-v7.1.1.apk
@@ -86,7 +101,7 @@ if [[ $startStage -le 1 ]]; then
 fi
 
 
-if [[ $startStage -le 2 ]]; then
+if [[ $startStage -le 3 ]]; then
 	echo "Waiting for recovery device. If the script doesn't detect, reboot the phone to Android desktop, enable file transfer,"
     echo "make sure the drive show up on your computer. Then reboot to recovery."
 	adb wait-for-recovery shell getprop
