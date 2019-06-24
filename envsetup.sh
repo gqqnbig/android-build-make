@@ -1697,3 +1697,8 @@ done
 unset f
 
 addcompletions
+
+
+export USE_CCACHE=1
+export CCACHE_DIR=/tmp/ccache
+prebuilts/misc/linux-x86/ccache/ccache -M 100G
